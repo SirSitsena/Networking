@@ -23,7 +23,7 @@ def serverRun():
     while True:
         player1 = ""
         while player1 not in ["R", "P", "S"]:
-            player1 = input("({},{}) Your move:".format(sPoint, cPoint))
+            player1 = input("({},{}) Your move:".format(sPoint, cPoint)).upper()
         sockC.sendall(bytearray(player1, 'ascii'))
 
         player2 = sockC.recv(1024).decode('ascii')
@@ -56,7 +56,7 @@ def clientRun():
 
         player1 = ""
         while player1 not in ["R", "P", "S"]:
-            player1 = input('({},{}) Your move: '.format(cPoint, sPoint))
+            player1 = input('({},{}) Your move: '.format(cPoint, sPoint)).upper()
         sock.sendall(bytearray(player1, 'ascii'))
         print("(opponent's move: {})".format(player2))
 
