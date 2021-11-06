@@ -13,7 +13,6 @@ sock = socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM)
 def serverRun():
     sock.bind(('127.0.0.1', PORT))
     sock.listen(1)
-    sock.listen(1)
     cPoint = 0
     sPoint = 0
 
