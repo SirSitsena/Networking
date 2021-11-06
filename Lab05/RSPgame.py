@@ -23,6 +23,8 @@ def serverRun():
         player1 = ""
         while player1 not in ["R", "P", "S"]:
             player1 = input("({},{}) Your move:".format(sPoint, cPoint)).upper()
+        print("Current score: {}, {}".format(sPoint, cPoint))
+        print("Your opponent's turn...")
         sockC.sendall(bytearray(player1, 'ascii'))
 
         player2 = sockC.recv(1024).decode('ascii')
@@ -37,11 +39,11 @@ def serverRun():
         elif cPoint == SCORE_STOP:
             print("You lost with {} vs {}".format(SCORE_STOP, sPoint))
             break
-
+    print('client {} disconnected'.format(addr))
+    termination = input("press Enter to exit")
+    
     sockC.close()
     sock.close()
-
-    print('client {} disconnected'.format(addr))
 
 
 def clientRun():
@@ -56,6 +58,8 @@ def clientRun():
         player1 = ""
         while player1 not in ["R", "P", "S"]:
             player1 = input('({},{}) Your move: '.format(cPoint, sPoint)).upper()
+        print("Current score: {}, {}".format(cPoint, sPoint))
+        print("Your opponent's turn...")
         sock.sendall(bytearray(player1, 'ascii'))
         print("(opponent's move: {})".format(player2))
 
@@ -68,10 +72,11 @@ def clientRun():
         elif sPoint == SCORE_STOP:
             print("You lost with {} vs {}".format(SCORE_STOP, cPoint))
             break
-
-    sock.close()
-
+            
     print('Opponent disconnected')
+    termination = input("press Enter to exit")
+    
+    sock.close()
 
 
 # R P S
