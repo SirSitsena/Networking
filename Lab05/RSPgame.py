@@ -39,11 +39,14 @@ def serverRun():
         elif cPoint == SCORE_STOP:
             print("You lost with {} vs {}".format(SCORE_STOP, sPoint))
             break
+            
+    sockC.close()
+    sock.close()
+    
     print('client {} disconnected'.format(addr))
     termination = input("press Enter to exit")
     
-    sockC.close()
-    sock.close()
+
 
 
 def clientRun():
@@ -73,10 +76,12 @@ def clientRun():
             print("You lost with {} vs {}".format(SCORE_STOP, cPoint))
             break
             
+    sock.close()
+    
     print('Opponent disconnected')
     termination = input("press Enter to exit")
     
-    sock.close()
+
 
 
 # R P S
