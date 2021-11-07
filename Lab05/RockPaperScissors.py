@@ -1,124 +1,93 @@
 import socket
 
-SCORE4WIN = 2
+SCORE4WIN = 10
 PORT = 12345
+
+myPoints = 0
+enemyPoints = 0
 
 
 def printRules():
-    print('\n****************************************\n')
-    print('\nWelcome to the Rock Paper Scissors game!\n')
-    print('\n---------------RULES--------------------\n')
+    print('\n----------------------Welcome/Rules----------------------\n')
+    print('This is the Rock Paper Scissors game!\n')
+
     print('Rules: R - for rock, P - for paper, S - for scissors')
-    print('You play until one of you wins {} times\n'.format(SCORE4WIN))
-    print('\n****************************************\n')
+    print('The game goes on until one of you wins {} times\n'.format(SCORE4WIN))
+    print('----------------------- GAME START ----------------------\n')
 
 
-def printEndGame(myPoints, enemyPoints):
-    if myPoints == SCORE4WIN:
-        print("\n****************CONGRATS****************\n")
-        print("You won with {} vs {}".format(SCORE4WIN, enemyPoints))
-        print("\n****************CONGRATS****************\n")
-    else:
-        print("\n***************GAME-OVER****************\n")
-        print("You lost with {} vs {}".format(myPoints, SCORE4WIN))
-        print("\n***************GAME-OVER****************\n")
+def calcPoints(myMove, enemyMove):
+    global myPoints
+    global enemyPoints
 
-
-def winCheck(myPoints, enemyPoints):
-    if myPoints == SCORE4WIN or enemyPoints == SCORE4WIN:
-        printEndGame(myPoints, enemyPoints)
-        return False
-    else:
-        print("Current score: {}, {}".format(myPoints, enemyPoints))
-        return True
-
-
-def moveCalc(myMove, enemyMove):
     if myMove == enemyMove:
-        return 0, 0
-    if myMove == "R" and enemyMove == "P":
-        return 0, 1
-    if myMove == "R" and enemyMove == "S":
-        return 1, 0
-    if myMove == "P" and enemyMove == "R":
-        return 1, 0
-    if myMove == "P" and enemyMove == "S":
-        return 0, 1
-    if myMove == "S" and enemyMove == "R":
-        return 0, 1
-    if myMove == "S" and enemyMove == "P":
-        return 1, 0
+        return
+
+    # my win
+    if (myMove == "R" and enemyMove == "S") or (myMove == "P" and enemyMove == "R") or (
+            myMove == "S" and enemyMove == "P"):
+        myPoints += 1
+
+    # enemy wins
+    if (myMove == "R" and enemyMove == "P") or (myMove == "P" and enemyMove == "S") or (
+            myMove == "S" and enemyMove == "R"):
+        enemyPoints += 1
 
 
-def game(sock, turn):
-    myPoints = 0
-    enemyPoints = 0
-    gameStatus = True
-    myMove = ""
-    flag = turn
-
+def runGame(sock):
     printRules()
 
-    # Server makes the first move ->
+    while (myPoints != SCORE4WIN) and (enemyPoints != SCORE4WIN):
 
-    while gameStatus:
         myMove = ""
-        if turn:
-            while myMove not in ["R", "P", "S"]:
-                myMove = input("({},{}) Your move: ".format(myPoints, enemyPoints)).upper()
-            sock.sendall(bytearray(myMove, 'ascii'))
-            enemyMove = sock.recv(1024).decode('ascii')
-        else:
-            enemyMove = sock.recv(1024).decode('ascii')
-            while myMove not in ["R", "P", "S"]:
-                myMove = input("({},{}) Your move: ".format(myPoints, enemyPoints)).upper()
-            sock.sendall(bytearray(myMove, 'ascii'))
-        print("\nYour opponent's turn...\n")
-        moveResult = moveCalc(myMove, enemyMove)
-        myPoints += moveResult[0]
-        enemyPoints += moveResult[1]
-        gameStatus = winCheck(myPoints, enemyPoints)
-    # Client makes the second move ->
+        while myMove not in ["R", "P", "S"]:
+            myMove = input("Your move: ").upper()
+
+        sock.sendall(bytearray(myMove, 'ascii'))
+
+        print("Waiting opponent's turn...")
+        enemyMove = sock.recv(1024).decode('ascii')
+
+        calcPoints(myMove, enemyMove)
+        print("Current scores: {}, {}\n".format(myPoints, enemyPoints))
+
+    print("\n---------------------- GAME OVER ------------------------\n")
+    iamWinner = (myPoints == SCORE4WIN)
+    print("You {} with {} vs {}".format("WON" if iamWinner else "LOST", myPoints, enemyPoints))
 
 
-def server():
+def runServer():
     serverSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM)
-    serverSocket.bind(('127.0.0.1', PORT))
+    serverSocket.bind(('', PORT))
     serverSocket.listen(1)
-    print('\nlistening...\n')
-    (clientSocket, addr) = serverSocket.accept()
-    print('connection from {}'.format(addr))
+    print('\nWaiting client...\n')
+    (clientSocket, clientAddress) = serverSocket.accept()
+    print('Client connected from {}'.format(clientAddress))
 
-    game(clientSocket, True)
+    runGame(clientSocket)
 
-    serverSocket.close()
     clientSocket.close()
-
-    print('client {} disconnected'.format(addr))
-    input("\npress Enter to exit\n\n")
-
-
-def client():
-    serverSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM)
-    serverSocket.connect((input("Enter servers IP address or localhost: "), PORT))
-
-    game(serverSocket, False)
-
     serverSocket.close()
 
-    print('Opponent disconnected')
-    input("\npress Enter to exit\n\n")
+
+def runClient():
+    sock = socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM)
+    host = input("Enter server's IP address or localhost: ")
+    sock.connect((host, PORT))
+
+    runGame(sock)
+
+    sock.close()
 
 
-def Main():
-    ans = ""
-    while ans not in ["S", "C"]:
-        ans = input("\nDo you want to be server (S) or client (C): ").upper()
+def main():
+    answer = ""
+    while answer not in ["S", "C"]:
+        answer = input("\nStart as server (S) or client (C): ").upper()
 
-    if ans == "S":
-        server()
-    else:
-        client()
+    runServer() if (answer == "S") else runClient()
+
+    input("\nPress 'Enter' to close game\n")
 
 
-Main()
+main()
