@@ -59,7 +59,7 @@ with open('exempeltext.txt') as file:
     print("The zipped Copy has: " + str(8*len(zippedShuffledCode)) + " bits")
     print("The zipped Copy's Entropy is: " + str(entropi(makeProb(makeHisto(zippedShuffledCode)))) + " bit/symbol")
     print("The zip algo compressed the data to: " + str(100-len(zippedShuffledCode)/len(byteArr)*100) + " % from origin(TEXT)")
-    print("The zip algo compressed the data to: " + str(len(zippedShuffledCode)/len(byteArr)*8) + " less bit\symbol")
+    print("The zip algo compressed the data to: " + str(len(zippedShuffledCode)/len(byteArr)*8) + " more bit\symbol")
     #--------------------------------End Zip Algorithm
 
     # -----------------------------------COPY - END
@@ -72,7 +72,7 @@ with open('exempeltext.txt') as file:
     print("The zipped Unshuffled byteArr has: " + str(len(zipbyteArr)) + "bytes")
     print("The zipped Unshuffled byteArr's Entropy is: " + str(entropi(makeProb(makeHisto(zipbyteArr)))) + " bit/symbol")
     print("The zip algo compressed the data to: " + str(100-len(zipbyteArr)/len(byteArr)*100) + " % from origin(TEXT)")
-    print("The zip algo compressed the data to: " + str(len(zipbyteArr)/len(byteArr)*8) + " less bit\symbol")
+    print("The zip algo compressed the data to: " + str(len(zipbyteArr)/len(byteArr)*8) + " more bit\symbol")
     # -----------------------------------Unshuffled byteArr - END
 
 
