@@ -1,6 +1,6 @@
 import socket
 
-SCORE4WIN = 10
+SCORE4WIN = 3
 PORT = 12345
 
 myPoints = 0

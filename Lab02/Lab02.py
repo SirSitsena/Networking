@@ -10,6 +10,10 @@ for line in open('score2.txt').readlines():
 
 maxScore = max(students.values())
 
-for name, score in students.items():
-    if score == maxScore:
-        print(name, "has the score: ", score)
+for name in students:
+    if students[name] == maxScore:
+        print(name, "has the score: ", students[name])
+
+# for name, score in students.items():
+#     if score == maxScore:
+#         print(name, "has the score: ", score)

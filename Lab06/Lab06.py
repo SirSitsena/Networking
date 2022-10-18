@@ -3,7 +3,7 @@ PORT = 80
 
 server = socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM, proto=0)
 server.bind(('127.0.0.1', PORT))
-server.listen(1)
+server.listen()
 print('\nlistening...\n')
 
 while True:
